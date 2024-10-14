@@ -140,8 +140,8 @@ return [
         ],
     ],
     'pinjam' => [
-        'title'          => 'Pinjam',
-        'title_singular' => 'Pinjam',
+        'title'          => 'Peminjaman',
+        'title_singular' => 'Peminjaman',
         'fields'         => [
             'id'                      => 'ID',
             'id_helper'               => ' ',

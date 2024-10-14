@@ -20,8 +20,6 @@ class RuangController extends Controller
 
     public function index()
     {
-        abort_if(Gate::denies('ruang_access'), Response::HTTP_FORBIDDEN, '403 Forbidden');
-
         $ruangs = Ruang::with(['media'])->get();
 
         return view('frontend.ruangs.index', compact('ruangs'));

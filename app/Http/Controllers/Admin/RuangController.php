@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Symfony\Component\HttpFoundation\Response;
 use Yajra\DataTables\Facades\DataTables;
+use Alert;
 
 class RuangController extends Controller
 {
@@ -91,6 +92,8 @@ class RuangController extends Controller
             Media::whereIn('id', $media)->update(['model_id' => $ruang->id]);
         }
 
+        Alert::success('Success', 'Ruang created successfully.');
+
         return redirect()->route('admin.ruangs.index');
     }
 
@@ -119,6 +122,8 @@ class RuangController extends Controller
             }
         }
 
+        Alert::success('Success', 'Ruang updated successfully.');
+
         return redirect()->route('admin.ruangs.index');
     }
 
@@ -134,6 +139,8 @@ class RuangController extends Controller
         abort_if(Gate::denies('ruang_delete'), Response::HTTP_FORBIDDEN, '403 Forbidden');
 
         $ruang->delete();
+
+        Alert::success('Success', 'Ruang deleted successfully.');
 
         return back();
     }
@@ -159,5 +166,26 @@ class RuangController extends Controller
         $media         = $model->addMediaFromRequest('upload')->toMediaCollection('ck-media');
 
         return response()->json(['id' => $media->id, 'url' => $media->getUrl()], Response::HTTP_CREATED);
+    }
+
+    public function getRuang(Request $request)
+    {
+        $keywords = $request->input('keywords');
+        $ruangs = Ruang::where(function($q) use ($keywords) {
+                    $q->where('code', 'LIKE', "%{$keywords}%")
+                    ->orWhere('name', 'LIKE', "%{$keywords}%");
+                })
+                ->orderBy('plat_no', 'ASC')
+                ->get();
+
+        foreach ($kendaraans as $ruang) {
+            $formattedProducts[] = [
+                'id' => $ruang->id,
+                'text' => $ruang->name,
+                'deskripsi' => $ruang->description,
+            ];
+        }
+
+        return response()->json($formattedProducts);
     }
 }
